@@ -1,58 +1,50 @@
 <template>
   <div class="container">
     <div class="rows">
-      <div class="row"></div>
-      <div class="row"></div>
-      <div class="row"></div>
-      <div class="row"></div>
-      <div class="row"></div>
+      <div class="row-wrapper" :key="row" v-for="row in floors">
+        <RowElement />
+      </div>
     </div>
     <div class="elevator-line">
-      <div class="elevator" ref="elevatorRef"></div>
+      <ElevatorElement ref="elevatorElement" />
     </div>
     <div class="buttons-line">
-      <div class="floor floor-5">
-        <p>5</p>
-        <button data-floor="5" @click="clickHandler">Call Elevator</button>
-      </div>
-      <div class="floor floor-4">
-        <p>4</p>
-        <button data-floor="4" @click="clickHandler">Call Elevator</button>
-      </div>
-      <div class="floor floor-3">
-        <p>3</p>
-        <button data-floor="3" @click="clickHandler">Call Elevator</button>
-      </div>
-      <div class="floor floor-2">
-        <p>2</p>
-        <button data-floor="2" @click="clickHandler">Call Elevator</button>
-      </div>
-      <div class="floor floor-1">
-        <p>1</p>
-        <button data-floor="1" @click="clickHandler">Call Elevator</button>
-      </div>
+      <FloorElement @callElevator="callHandler" class="floor floor-1" floorNumber="1" />
+      <FloorElement @callElevator="callHandler" class="floor floor-2" floorNumber="2" />
+      <FloorElement @callElevator="callHandler" class="floor floor-3" floorNumber="3" />
+      <FloorElement @callElevator="callHandler" class="floor floor-4" floorNumber="4" />
+      <FloorElement @callElevator="callHandler" class="floor floor-5" floorNumber="5" />
     </div>
   </div>
 </template>
 
 <script>
 import { ref } from "@vue/reactivity";
+import RowElement from "./components/RowElement.vue";
+import ElevatorElement from "./components/ElevatorElement.vue";
+import FloorElement from "./components/FloorElement.vue";
 export default {
   name: "App",
+  components: {
+    RowElement,
+    ElevatorElement,
+    FloorElement,
+  },
   setup() {
-    const clickHandler = (e) => {
-      const floor = e.target.dataset.floor;
-      console.log("i have been clicked", floor);
-      console.dir(elevatorRef.value);
+
+    const callHandler = (floor) => {
+      console.log(floor);
+      const elevator = elevatorElement.value.elevatorRef;
       const moveAmount = floor * 100;
       const baseAmount = 500;
-      console.log(moveAmount);
-      elevatorRef.value.style = `top: ${baseAmount - moveAmount}px`;
+      elevator.style = `top: ${baseAmount - moveAmount}px`;
     };
 
-    const elevatorRef = ref(null);
+    const floors = [1, 2, 3, 4, 5];
 
-    return { clickHandler, elevatorRef };
+    const elevatorElement = ref(null);
+
+    return { floors, elevatorElement, callHandler };
   },
 };
 </script>
@@ -72,11 +64,6 @@ export default {
 
 body {
   background: rgb(212, 212, 212);
-}
-
-.row {
-  border: 1px solid black;
-  height: 100px;
 }
 
 .elevator-line {
@@ -111,14 +98,5 @@ body {
 }
 .floor-1 {
   top: 400px;
-}
-
-.elevator {
-  height: 100px;
-  width: 100px;
-  background: goldenrod;
-  position: absolute;
-  bottom: 0;
-  left: 0;
 }
 </style>
