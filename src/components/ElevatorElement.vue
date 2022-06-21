@@ -20,5 +20,6 @@ defineExpose({
   position: absolute;
   bottom: 0;
   left: 0;
+  transition: all 2s ease;
 }
 </style>

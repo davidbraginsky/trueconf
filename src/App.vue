@@ -31,13 +31,14 @@ export default {
     FloorElement,
   },
   setup() {
-
     const callHandler = (floor) => {
       console.log(floor);
       const elevator = elevatorElement.value.elevatorRef;
       const moveAmount = floor * 100;
-      const baseAmount = 500;
-      elevator.style = `top: ${baseAmount - moveAmount}px`;
+      const baseAmount = 100;
+      const totalAmount = moveAmount - baseAmount;
+      console.log(totalAmount);
+      elevator.style = `transform: translateY(-${totalAmount}px)`;
     };
 
     const floors = [1, 2, 3, 4, 5];
