@@ -20,5 +20,8 @@ defineExpose({
   position: absolute;
   bottom: 0;
   left: 0;
+  transition-property: all;
+  transition-duration: 2s;
+  transition-timing-function: linear;
 }
 </style>
