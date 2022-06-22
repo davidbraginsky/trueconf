@@ -9,11 +9,9 @@
       <ElevatorElement ref="elevatorElement" />
     </div>
     <div class="buttons-line">
-      <FloorElement @callElevator="callHandler" class="floor floor-1" floorNumber="1" />
-      <FloorElement @callElevator="callHandler" class="floor floor-2" floorNumber="2" />
-      <FloorElement @callElevator="callHandler" class="floor floor-3" floorNumber="3" />
-      <FloorElement @callElevator="callHandler" class="floor floor-4" floorNumber="4" />
-      <FloorElement @callElevator="callHandler" class="floor floor-5" floorNumber="5" />
+      <div class="floor-wrapper" :key="item" v-for="item in floors">
+        <FloorElement @callElevator="callHandler" class="floor" :floorNumber="item" />
+      </div>
     </div>
   </div>
 </template>
@@ -31,21 +29,32 @@ export default {
     FloorElement,
   },
   setup() {
+    let currentFloor = ref(1);
+
     const callHandler = (floor) => {
-      console.log(floor);
       const elevator = elevatorElement.value.elevatorRef;
+      const floorDistance = Math.abs(floor - currentFloor.value);
       const moveAmount = floor * 100;
       const baseAmount = 100;
       const totalAmount = moveAmount - baseAmount;
-      console.log(totalAmount);
-      elevator.style = `transform: translateY(-${totalAmount}px)`;
+      elevator.setAttribute("style", `transform: translateY(-${totalAmount}px); transition-duration: ${floorDistance}s; animation-delay: ${floorDistance}s`);
+      currentFloor.value = floor;
+      if (elevator.classList.contains("isIdle")) {
+        elevator.classList.remove("isIdle");
+        void elevator.offsetWidth;
+        elevator.classList.add("isIdle");
+      } else {
+        elevator.classList.add("isIdle");
+      }
     };
 
-    const floors = [1, 2, 3, 4, 5];
+    let isIdle = ref(false);
+
+    const floors = [5, 4, 3, 2, 1];
 
     const elevatorElement = ref(null);
 
-    return { floors, elevatorElement, callHandler };
+    return { floors, elevatorElement, callHandler, isIdle, currentFloor };
   },
 };
 </script>
@@ -76,28 +85,44 @@ body {
   left: 0;
 }
 
+.isIdle {
+  animation-name: blink;
+  animation-duration: 1s;
+  animation-iteration-count: 3;
+  animation-fill-mode: both;
+}
+
+.isMoving {
+  animation-name: moveOneFloor;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
 .floor {
   width: 100px;
   height: 100px;
   border: 1px solid green;
+  top: 0;
+  left: 100px;
+}
+
+.buttons-line {
   position: absolute;
   top: 0;
   left: 100px;
 }
 
-.floor-5 {
-  top: 0px;
-}
-.floor-4 {
-  top: 100px;
-}
-.floor-3 {
-  top: 200px;
-}
-.floor-2 {
-  top: 300px;
-}
-.floor-1 {
-  top: 400px;
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 </style>
